@@ -29,7 +29,7 @@ class User < ApplicationRecord
 
     File.write(
       Rails.root.join("tmp/#{filename}"),
-      "Valida tu cuenta: #{validation_url}"
+      "Confirm your account: #{validation_url}"
     )
   end
 end
