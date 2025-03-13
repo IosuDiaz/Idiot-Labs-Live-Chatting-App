@@ -22,7 +22,7 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate_user!
-    token = request.headers["Authorization"]&.split(" ")&.last
+    token = fetch_auth_token
     return render_error("Access Token is required") unless token
 
     decoded_token = JwtService.decode(token)
@@ -30,6 +30,10 @@ class ApplicationController < ActionController::API
     @current_user = User.find(decoded_token["user_id"])
   rescue JWT::DecodeError, JWT::ExpiredSignature => e
     render_error("Authentication Error: #{e.message}")
+  end
+
+  def fetch_auth_token
+    request.headers["Authorization"]&.split(" ")&.last
   end
 
   def render_error(message)
