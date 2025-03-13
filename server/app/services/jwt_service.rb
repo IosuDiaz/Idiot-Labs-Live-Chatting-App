@@ -8,8 +8,6 @@ class JwtService
   end
 
   def self.decode(token)
-    JWT.decode(token, SECRET, true, { algorithm: ALGORITHM }).first
-  rescue JWT::DecodeError
-    nil
+    JWT.decode(token, SECRET, true, { algorithm: ALGORITHM, verify_expiration: true }).first
   end
 end
