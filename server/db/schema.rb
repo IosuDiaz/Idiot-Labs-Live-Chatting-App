@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_03_14_173048) do
+ActiveRecord::Schema[7.2].define(version: 2025_03_14_182105) do
   create_table "channels", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.text "description"
@@ -19,6 +19,20 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_14_173048) do
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_channels_on_creator_id"
     t.index ["name"], name: "index_channels_on_name", unique: true
+  end
+
+  create_table "messages", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.text "content", null: false
+    t.bigint "sender_id", null: false
+    t.bigint "receiver_id"
+    t.bigint "channel_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["channel_id"], name: "index_messages_on_channel_id"
+    t.index ["receiver_id", "sender_id"], name: "index_messages_on_receiver_and_sender"
+    t.index ["receiver_id"], name: "index_messages_on_receiver_id"
+    t.index ["sender_id", "receiver_id"], name: "index_messages_on_sender_and_receiver"
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -33,4 +47,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_14_173048) do
   end
 
   add_foreign_key "channels", "users", column: "creator_id"
+  add_foreign_key "messages", "channels"
+  add_foreign_key "messages", "users", column: "receiver_id"
+  add_foreign_key "messages", "users", column: "sender_id"
 end
