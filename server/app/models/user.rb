@@ -15,11 +15,11 @@ class User < ApplicationRecord
 
   validates :password, length: { minimum: 6 }, if: -> { new_record? || !password.nil? }
 
-  after_create :generate_validation_link
+  after_create :send_confirmation_instructions
 
   private
 
-  def generate_validation_link
+  def send_confirmation_instructions
     SendConfirmationService.generate(self)
   end
 end
