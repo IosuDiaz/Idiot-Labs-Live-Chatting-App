@@ -20,7 +20,7 @@ class User < ApplicationRecord
   private
 
   def generate_validation_link
-    payload = { user_id: id, exp: 24.hours.from_now.to_i }
+    payload = { user_id: id }
     token = JwtService.encode(payload)
 
     validation_url = api_users_confirm_url(token: token)

@@ -4,10 +4,16 @@ class ApplicationController < ActionController::API
   rescue_from ActionController::ParameterMissing, with: :bad_request_response
   rescue_from ActiveRecord::RecordInvalid, with: :unprocessable_entity_response
   rescue_from ActiveRecord::RecordNotFound, with: :not_found_response
+  rescue_from Exceptions::UnconfirmedUserError, with: :invalid_credentials
+  rescue_from Exceptions::AuthenticationError, with: :invalid_credentials
 
   attr_reader :current_user
 
   private
+
+  def invalid_credentials(exception)
+    render json: { error: exception.message }, status: :unauthorized
+  end
 
   def bad_request_response(exception)
     render json: { error: exception }, status: :bad_request

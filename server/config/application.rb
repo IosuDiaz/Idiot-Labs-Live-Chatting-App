@@ -16,6 +16,8 @@ module Server
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    config.x.jwt.expiration_hours = ENV.fetch("JWT_EXPIRATION_HOURS", 24).to_i
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

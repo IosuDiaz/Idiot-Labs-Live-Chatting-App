@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   # root "posts#index"
   namespace :api do
     post "signup", to: "registrations#create"
+    post "login", to: "sessions#create"
 
     namespace :users do
       get "confirm", to: "confirmations#confirm"
