@@ -13,6 +13,7 @@ Rails.application.routes.draw do
 
     namespace :users do
       get "confirm", to: "confirmations#confirm"
+      post "resend_confirmation", to: "confirmations#resend_confirmation"
     end
   end
 end

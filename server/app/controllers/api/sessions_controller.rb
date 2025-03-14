@@ -5,7 +5,7 @@ module Api
     def create
       user = User.find_by(email: login_params[:email])
       raise Exceptions::AuthenticationError unless user&.authenticate(login_params[:password])
-      raise Exceptions::UnconfirmedUserError unless user.confirmed?
+      raise Exceptions::UserNotConfirmedError unless user.confirmed?
 
       token = JwtService.encode({ user_id: user.id })
       render json: {

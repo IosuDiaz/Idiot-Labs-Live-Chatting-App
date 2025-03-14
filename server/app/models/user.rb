@@ -15,21 +15,11 @@ class User < ApplicationRecord
 
   validates :password, length: { minimum: 6 }, if: -> { new_record? || !password.nil? }
 
-  after_create :generate_validation_link
+  after_create :send_confirmation_instructions
 
   private
 
-  def generate_validation_link
-    payload = { user_id: id }
-    token = JwtService.encode(payload)
-
-    validation_url = api_users_confirm_url(token: token)
-    safe_email = email.parameterize(separator: "_")
-    filename = "#{safe_email}.txt"
-
-    File.write(
-      Rails.root.join("tmp/#{filename}"),
-      "Confirm your account: #{validation_url}"
-    )
+  def send_confirmation_instructions
+    SendConfirmationService.generate(self)
   end
 end
