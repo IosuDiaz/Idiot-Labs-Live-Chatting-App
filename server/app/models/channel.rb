@@ -6,7 +6,7 @@ class Channel < ApplicationRecord
     uniqueness: true,
     format: {
       with: /\A[\w-]+\z/,
-      message: "solo permite letras, números, guiones y underscores"
+      message: "just letters, numbers, scores and underscores allowed"
     }
 
   validates :description, length: { maximum: 500 }
