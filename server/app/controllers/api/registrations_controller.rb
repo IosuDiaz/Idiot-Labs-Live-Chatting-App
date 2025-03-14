@@ -5,8 +5,7 @@ class Api::RegistrationsController < ApplicationController
     user = User.create!(user_params)
 
     render json: {
-      status: "success",
-      message: "Usuario registrado. Revisa tu email para validar la cuenta.",
+      message: "Signed up successfully. Check your email to cofirm the user.",
       data: { email: user.email }
     }, status: :created
   end
