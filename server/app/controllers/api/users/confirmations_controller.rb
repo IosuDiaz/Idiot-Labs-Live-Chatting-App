@@ -4,11 +4,7 @@ module Api::Users
 
     def confirm
       current_user.confirmed? ? raise_already_confirmed_error! : confirm_user
-      render json: {
-        data: {
-          message: "¡Account confirmed successfully! You can Login now."
-        }
-      }, status: :ok
+      render json: { message: "¡Account confirmed successfully! You can Login now." }, status: :ok
     end
 
     def resend_confirmation
@@ -16,11 +12,7 @@ module Api::Users
       raise_already_confirmed_error! if user.confirmed?
 
       SendConfirmationService.generate(user)
-      render json: {
-        data: {
-          message: "¡Confirmation sent! Check your email to finish the sign up."
-        }
-      }, status: :ok
+      render json: { message: "¡Confirmation sent! Check your email to finish the sign up." }, status: :ok
     end
 
     private
