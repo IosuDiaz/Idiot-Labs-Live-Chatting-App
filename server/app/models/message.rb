@@ -9,4 +9,12 @@ class Message < ApplicationRecord
 
   validates :sender, presence: true
   validates :channel, presence: true
+
+  after_create :update_channel_last_message_at
+
+  private
+
+  def update_channel_last_message_at
+    channel.update!(last_message_at: created_at)
+  end
 end

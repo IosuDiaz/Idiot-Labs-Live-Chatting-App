@@ -34,11 +34,10 @@ class ApplicationController < ActionController::API
   end
 
   def unprocessable_entity_response(exception)
-    byebug
     render json: { errors: exception.record.errors.messages }, status: :unprocessable_entity
   end
 
-  def not_found_response(exception)
+  def not_found_response(error)
     render_error(error, :not_found)
   end
 

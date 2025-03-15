@@ -5,6 +5,14 @@ class Channel < ApplicationRecord
   has_many :memberships, dependent: :destroy
   has_many :users, through: :memberships
 
+  scope :public_channels, -> {
+    where(public: true)
+      .includes(:creator)
+      .order(created_at: :desc)
+  }
+
+  scope :ordered_by_activity, -> { order(last_message_at: :desc) }
+
   validates :name,
     presence: true,
     uniqueness: {
