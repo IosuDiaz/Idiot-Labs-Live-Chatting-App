@@ -9,12 +9,13 @@ module ErrorHandler
 
   def handle_internal_error(exception)
     Rails.logger.error "Cable Error: #{exception.message}\n#{exception.backtrace.join("\n")}"
-    transmit_error(type: "internal_error", message: "Something went wrong", code: 500)
+    transmit_error(code: "internal_error", message: "Something went wrong")
   end
 
   def transmit_error(details)
     transmit({
       type: "error",
+      success: false,
       error: details
     })
   end
