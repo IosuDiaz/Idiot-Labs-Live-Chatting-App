@@ -10,28 +10,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_03_14_182105) do
+ActiveRecord::Schema[7.2].define(version: 2025_03_14_222120) do
   create_table "channels", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "name", null: false
+    t.string "name"
     t.text "description"
     t.bigint "creator_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "public", default: true
     t.index ["creator_id"], name: "index_channels_on_creator_id"
     t.index ["name"], name: "index_channels_on_name", unique: true
+  end
+
+  create_table "memberships", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "channel_id", null: false
+    t.integer "role", default: 0
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["channel_id"], name: "index_memberships_on_channel_id"
+    t.index ["status"], name: "index_memberships_on_status"
+    t.index ["user_id", "channel_id"], name: "index_memberships_on_user_and_channel", unique: true
+    t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
   create_table "messages", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "content", null: false
     t.bigint "sender_id", null: false
-    t.bigint "receiver_id"
-    t.bigint "channel_id"
+    t.bigint "channel_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["channel_id"], name: "index_messages_on_channel_id"
-    t.index ["receiver_id", "sender_id"], name: "index_messages_on_receiver_and_sender"
-    t.index ["receiver_id"], name: "index_messages_on_receiver_id"
-    t.index ["sender_id", "receiver_id"], name: "index_messages_on_sender_and_receiver"
+    t.index ["sender_id", "channel_id"], name: "index_messages_on_sender_and_channel"
     t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
@@ -47,7 +58,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_14_182105) do
   end
 
   add_foreign_key "channels", "users", column: "creator_id"
+  add_foreign_key "memberships", "channels"
+  add_foreign_key "memberships", "users"
   add_foreign_key "messages", "channels"
-  add_foreign_key "messages", "users", column: "receiver_id"
   add_foreign_key "messages", "users", column: "sender_id"
 end
