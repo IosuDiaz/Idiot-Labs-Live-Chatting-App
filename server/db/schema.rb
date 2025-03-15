@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_03_14_222120) do
+ActiveRecord::Schema[7.2].define(version: 2025_03_15_190701) do
   create_table "channels", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -18,7 +18,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_14_222120) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "public", default: true
+    t.datetime "last_message_at"
     t.index ["creator_id"], name: "index_channels_on_creator_id"
+    t.index ["last_message_at"], name: "index_channels_on_last_message_at_desc", order: :desc
     t.index ["name"], name: "index_channels_on_name", unique: true
   end
 
