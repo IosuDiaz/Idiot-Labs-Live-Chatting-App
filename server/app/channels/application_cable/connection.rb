@@ -15,7 +15,7 @@ module ApplicationCable
 
       decoded_token = JwtService.decode(token)
       User.find_by!(id: decoded_token["user_id"])
-    rescue JWT::DecodeError, ActiveRecord::RecordNotFound
+    rescue JWT::DecodeError, JWT::ExpiredSignature, ActiveRecord::RecordNotFound
       nil
     end
 
