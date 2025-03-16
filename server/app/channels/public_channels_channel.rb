@@ -22,10 +22,10 @@ class PublicChannelsChannel < ApplicationCable::Channel
   def create_public_channel(data)
     ActiveRecord::Base.transaction do
       create_channel!(data)
-
-      transmit_success("channel_created", channel: channel_presenter(channel))
-      broadcast_to_public_channels(channel)
     end
+
+    transmit_success("channel_created", channel: channel_presenter(channel))
+    broadcast_to_public_channels(channel)
   rescue ActiveRecord::RecordInvalid => e
     transmit_error(code: "creation_failed", messages: e.record.errors.full_messages)
   end
