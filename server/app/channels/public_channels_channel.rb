@@ -45,15 +45,7 @@ class PublicChannelsChannel < ApplicationCable::Channel
   end
 
   def broadcast_to_public_channels(channel)
-    ActionCable.server.broadcast(
-      "public_channels",
-      {
-        type: "channel_created",
-        success: true,
-        data: { channel: channel_presenter(channel) },
-        is_broadcast: true
-      }
-    )
+    BroadcastWorker.perform_async("public_channels", "channel_created", { channel: channel_presenter(channel) }.deep_stringify_keys)
   end
 
   def channel_presenter(channel)
