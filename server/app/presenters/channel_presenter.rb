@@ -15,7 +15,7 @@ class ChannelPresenter
         nickname: channel.creator.nickname
       },
       members_count: channel.memberships.count,
-      last_activity: channel.last_message_at || channel.created_at
+      last_activity: (channel.last_message_at || channel.created_at).to_s
     }
   end
 end

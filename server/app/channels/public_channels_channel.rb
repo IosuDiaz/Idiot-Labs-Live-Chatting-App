@@ -1,35 +1,58 @@
 class PublicChannelsChannel < ApplicationCable::Channel
+  attr_reader :channel
+
   def subscribed
     stream_from "public_channels"
   end
 
   def list_public_channels
-    channels = Channel.public_channels.map { |channel| ChannelPresenter.new(channel).to_h }
-
-    transmit({ type: "public_channels", success: true, data: { channels: channels } })
+    channels = public_channels.map { |channel| channel_presenter(channel) }
+    transmit_success("public_channels", channels: channels)
   end
 
   def list_users(data)
-    channel = Channel.public_channels.find(data["channel_id"])
-    users_data = channel.users.map { |user| UserPresenter.new(user).to_h }
-    transmit({ type: "channel_users", success: true, data: { users: users_data } })
+    channel = public_channels.find(data["channel_id"])
+    users_data = channel.users.map { |user| user_presenter(user) }
+
+    transmit_success("channel_users", users: users_data)
   rescue ActiveRecord::RecordNotFound => e
     transmit_error(code: "not_found", message: e.message)
   end
 
+  def create_public_channel(data)
+    ActiveRecord::Base.transaction do
+      create_channel!(data)
+    end
+
+    transmit_success("channel_created", channel: channel_presenter(channel))
+    broadcast_to_public_channels(channel)
+  rescue ActiveRecord::RecordInvalid => e
+    transmit_error(code: "creation_failed", messages: e.record.errors.full_messages)
+  end
+
   private
 
+  def public_channels
+    Channel.public_channels
+  end
+
+  def create_channel!(data)
+    @channel = current_user.created_channels.create!(
+      name: data["name"],
+      description: data["description"],
+      public: true
+    )
+  end
+
+  def broadcast_to_public_channels(channel)
+    BroadcastWorker.perform_async("public_channels", "channel_created", { channel: channel_presenter(channel) }.deep_stringify_keys)
+  end
+
   def channel_presenter(channel)
-    {
-      id: channel.id,
-      name: channel.name,
-      description: channel.description,
-      creator: {
-        id: channel.creator.id,
-        nickname: channel.creator.nickname
-      },
-      members_count: channel.memberships.count,
-      last_activity: channel.last_message_at || channel.created_at
-    }
+    ChannelPresenter.new(channel).to_h
+  end
+
+  def user_presenter(user)
+    UserPresenter.new(user).to_h
   end
 end
