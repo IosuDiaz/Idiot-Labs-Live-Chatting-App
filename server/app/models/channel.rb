@@ -21,8 +21,8 @@ class Channel < ApplicationRecord
       conditions: -> { where(public: true) }
     },
     format: {
-      with: /\A[\w-]+\z/,
-      message: "just letters, numbers, scores and underscores allowed"
+      with: /\A(?=.*[^\s])[\w\s-]+\z/,
+      message: "just letters, numbers, scores, underscores and spaces allowed"
     },
     if: :public?
 
