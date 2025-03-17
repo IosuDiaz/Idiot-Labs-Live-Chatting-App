@@ -3,9 +3,9 @@ class Membership < ApplicationRecord
   belongs_to :channel
 
   enum :role, { member: 0, creator: 1 }, default: :member
-  enum :status, { active: 0, banned: 1 }, default: :active
+  enum :status, { active: 0, inactive: 1, banned: 2 }, default: :active
 
-  validates :user_id, uniqueness: { scope: :channel_id }
+  validates :user_id, uniqueness: { scope: :channel_id, message: "is already joined" }
   validate :user_must_be_confirmed
 
   private

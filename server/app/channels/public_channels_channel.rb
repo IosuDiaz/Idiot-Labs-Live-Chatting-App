@@ -45,7 +45,13 @@ class PublicChannelsChannel < ApplicationCable::Channel
   end
 
   def broadcast_to_public_channels(channel)
-    BroadcastWorker.perform_async("public_channels", "channel_created", { channel: channel_presenter(channel) }.deep_stringify_keys)
+    broadcast_to_channel(
+      "public_channels",
+      "user_joined",
+      { user: user_presenter(current_user) }.deep_stringify_keys
+    ) do |channel, payload|
+      ActionCable.server.broadcast(channel, payload)
+    end
   end
 
   def channel_presenter(channel)
