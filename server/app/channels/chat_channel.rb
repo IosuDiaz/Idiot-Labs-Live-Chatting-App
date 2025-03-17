@@ -12,11 +12,6 @@ class ChatChannel < ApplicationCable::Channel
     stream_for channel
   end
 
-  def transmit_and_reject(code, message)
-    transmit_error({ code: code, message: message })
-    reject
-  end
-
   def unsubscribed
     return unless channel
 
@@ -31,6 +26,11 @@ class ChatChannel < ApplicationCable::Channel
   end
 
   private
+
+  def transmit_and_reject(code, message)
+    transmit_error({ code: code, message: message })
+    reject
+  end
 
   def broadcast_user_action(action)
     broadcast_to_channel(channel, action, { user: user_presenter(current_user) }.deep_stringify_keys) do |channel, payload|
