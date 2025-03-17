@@ -8,14 +8,16 @@ class ChatChannel < ApplicationCable::Channel
     find_or_create_user_membership
     return transmit_and_reject("reject_subscription", "Membership is banned") if membership.banned?
 
-    broadcast_user_action("user_joined", { user: user_presenter(current_user) }) if should_broadcast?
+    broadcast_action("user_joined", { user: user_presenter }) if should_broadcast?
     stream_for channel
   end
 
   def receive(data)
     @message = channel.messages.create!(sender: current_user, content: data["content"])
 
-    broadcast_user_action("new_message", { message: message_presenter(message) })
+    broadcast_action("new_message", { message: message_presenter })
+  rescue ActiveRecord::RecordInvalid => e
+    transmit_error({ code: "creation_failed", messages: e.record.errors.full_messages })
   end
 
   def unsubscribed
@@ -26,9 +28,9 @@ class ChatChannel < ApplicationCable::Channel
     if membership && membership.active?
       membership.update!(status: :inactive)
       action = "user_left"
-      payload = { user: user_presenter(current_user) }
+      payload = { user: user_presenter }
       transmit_success(action, payload)
-      broadcast_user_action(action, payload)
+      broadcast_action(action, payload)
     end
   end
 
@@ -43,7 +45,7 @@ class ChatChannel < ApplicationCable::Channel
     reject
   end
 
-  def broadcast_user_action(action, payload)
+  def broadcast_action(action, payload)
     broadcast_to_channel(channel, action, payload.deep_stringify_keys) do |channel, payload|
       ChatChannel.broadcast_to(channel, payload)
     end
@@ -56,11 +58,11 @@ class ChatChannel < ApplicationCable::Channel
     membership.update!(status: "active") if membership.inactive?
   end
 
-  def user_presenter(user)
-    UserPresenter.new(user).to_h
+  def user_presenter
+    UserPresenter.new(current_user).to_h
   end
 
-  def message_presenter(message)
+  def message_presenter
     MessagePresenter.new(message).to_h
   end
 end
