@@ -38,7 +38,7 @@ class Channel < ApplicationRecord
     memberships.create!(
       user: creator,
       role: :creator,
-      status: :active
+      status: :inactive
     )
   end
 
