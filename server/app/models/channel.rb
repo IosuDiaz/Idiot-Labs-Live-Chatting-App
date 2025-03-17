@@ -32,6 +32,10 @@ class Channel < ApplicationRecord
 
   after_create :create_creator_membership
 
+  def active_users
+    users.joins(:memberships).where(memberships: { status: "active" }).distinct
+  end
+
   private
 
   def create_creator_membership
