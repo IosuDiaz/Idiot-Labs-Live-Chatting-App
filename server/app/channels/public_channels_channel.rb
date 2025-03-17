@@ -20,9 +20,7 @@ class PublicChannelsChannel < ApplicationCable::Channel
   end
 
   def create_public_channel(data)
-    ActiveRecord::Base.transaction do
-      create_channel!(data)
-    end
+    create_channel!(data)
 
     transmit_success("channel_created", channel: channel_presenter(channel))
     broadcast_to_public_channels(channel)
@@ -47,8 +45,8 @@ class PublicChannelsChannel < ApplicationCable::Channel
   def broadcast_to_public_channels(channel)
     broadcast_to_channel(
       "public_channels",
-      "user_joined",
-      { user: user_presenter(current_user) }.deep_stringify_keys
+      "channel_created",
+      { channel: channel_presenter(channel) }.deep_stringify_keys
     ) do |channel, payload|
       ActionCable.server.broadcast(channel, payload)
     end

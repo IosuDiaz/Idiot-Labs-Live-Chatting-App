@@ -1,5 +1,5 @@
 class ChatChannel < ApplicationCable::Channel
-  attr_accessor :channel, :membership
+  attr_accessor :channel, :membership, :message
 
   def subscribed
     @channel = Channel.find_by(id: params[:channel_id])
@@ -8,8 +8,16 @@ class ChatChannel < ApplicationCable::Channel
     find_or_create_user_membership
     return transmit_and_reject("reject_subscription", "Membership is banned") if membership.banned?
 
-    broadcast_user_action("user_joined") if membership.status == "active" && membership.saved_change_to_status?
+    broadcast_action("user_joined", { user: user_presenter }) if should_broadcast?
     stream_for channel
+  end
+
+  def receive(data)
+    @message = channel.messages.create!(sender: current_user, content: data["content"])
+
+    broadcast_action("new_message", { message: message_presenter })
+  rescue ActiveRecord::RecordInvalid => e
+    transmit_error({ code: "creation_failed", messages: e.record.errors.full_messages })
   end
 
   def unsubscribed
@@ -20,20 +28,25 @@ class ChatChannel < ApplicationCable::Channel
     if membership && membership.active?
       membership.update!(status: :inactive)
       action = "user_left"
-      transmit_success(action, { user: user_presenter(current_user) })
-      broadcast_user_action(action)
+      payload = { user: user_presenter }
+      transmit_success(action, payload)
+      broadcast_action(action, payload)
     end
   end
 
   private
+
+  def should_broadcast?
+    membership.status == "active" && membership.saved_change_to_status?
+  end
 
   def transmit_and_reject(code, message)
     transmit_error({ code: code, message: message })
     reject
   end
 
-  def broadcast_user_action(action)
-    broadcast_to_channel(channel, action, { user: user_presenter(current_user) }.deep_stringify_keys) do |channel, payload|
+  def broadcast_action(action, payload)
+    broadcast_to_channel(channel, action, payload.deep_stringify_keys) do |channel, payload|
       ChatChannel.broadcast_to(channel, payload)
     end
   end
@@ -45,7 +58,11 @@ class ChatChannel < ApplicationCable::Channel
     membership.update!(status: "active") if membership.inactive?
   end
 
-  def user_presenter(user)
-    UserPresenter.new(user).to_h
+  def user_presenter
+    UserPresenter.new(current_user).to_h
+  end
+
+  def message_presenter
+    MessagePresenter.new(message).to_h
   end
 end
