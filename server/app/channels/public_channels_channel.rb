@@ -6,17 +6,8 @@ class PublicChannelsChannel < ApplicationCable::Channel
   end
 
   def list_public_channels
-    channels = public_channels.map { |channel| channel_presenter(channel) }
+    channels = Channel.public_channels.map { |channel| channel_presenter(channel) }
     transmit_success("public_channels", channels: channels)
-  end
-
-  def list_users(data)
-    channel = public_channels.find(data["channel_id"])
-    users_data = channel.users.map { |user| user_presenter(user) }
-
-    transmit_success("channel_users", users: users_data)
-  rescue ActiveRecord::RecordNotFound => e
-    transmit_error(code: "not_found", message: e.message)
   end
 
   def create_public_channel(data)
@@ -29,10 +20,6 @@ class PublicChannelsChannel < ApplicationCable::Channel
   end
 
   private
-
-  def public_channels
-    Channel.public_channels
-  end
 
   def create_channel!(data)
     @channel = current_user.created_channels.create!(
@@ -54,9 +41,5 @@ class PublicChannelsChannel < ApplicationCable::Channel
 
   def channel_presenter(channel)
     ChannelPresenter.new(channel).to_h
-  end
-
-  def user_presenter(user)
-    UserPresenter.new(user).to_h
   end
 end

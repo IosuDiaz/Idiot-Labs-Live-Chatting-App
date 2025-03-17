@@ -20,6 +20,14 @@ class ChatChannel < ApplicationCable::Channel
     transmit_error({ code: "creation_failed", messages: e.record.errors.full_messages })
   end
 
+  def list_users(data)
+    users_data = channel.active_users.map { |user| user_presenter(user) }
+
+    transmit_success("channel_users", users: users_data)
+  rescue ActiveRecord::RecordNotFound => e
+    transmit_error(code: "not_found", message: e.message)
+  end
+
   def unsubscribed
     return unless channel
 
@@ -58,8 +66,8 @@ class ChatChannel < ApplicationCable::Channel
     membership.update!(status: "active") if membership.inactive?
   end
 
-  def user_presenter
-    UserPresenter.new(current_user).to_h
+  def user_presenter(user = current_user)
+    UserPresenter.new(user).to_h
   end
 
   def message_presenter
