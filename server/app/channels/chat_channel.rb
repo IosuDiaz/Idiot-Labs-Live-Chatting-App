@@ -18,15 +18,6 @@ class ChatChannel < ApplicationCable::Channel
     broadcast_user_action("new_message", { message: message_presenter(message) })
   end
 
-  def message_presenter(message)
-    {
-      id: message.id,
-      content: message.content,
-      user: user_presenter(message.sender),
-      created_at: message.created_at
-    }
-  end
-
   def unsubscribed
     return unless channel
 
@@ -67,5 +58,9 @@ class ChatChannel < ApplicationCable::Channel
 
   def user_presenter(user)
     UserPresenter.new(user).to_h
+  end
+
+  def message_presenter(message)
+    MessagePresenter.new(message).to_h
   end
 end
