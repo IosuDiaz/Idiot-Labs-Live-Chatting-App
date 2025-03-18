@@ -2,7 +2,7 @@ class PrivateChannelsChannel < ApplicationCable::Channel
   attr_accessor :receiver, :channel
 
   def subscribed
-    stream_from "private_channel_creation:#{current_user.id}"
+    stream_from "private_channels:#{current_user.id}"
   end
 
   def create_channel(data)

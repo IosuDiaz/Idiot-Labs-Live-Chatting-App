@@ -48,11 +48,6 @@ class ChatChannel < ApplicationCable::Channel
     membership.status == "active" && membership.saved_change_to_status?
   end
 
-  def transmit_and_reject(code, message)
-    transmit_error({ code: code, message: message })
-    reject
-  end
-
   def broadcast_action(action, payload)
     broadcast_to_channel(channel, action, payload.deep_stringify_keys) do |channel, payload|
       ChatChannel.broadcast_to(channel, payload)
