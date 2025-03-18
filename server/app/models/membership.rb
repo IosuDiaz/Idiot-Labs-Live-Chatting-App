@@ -8,6 +8,8 @@ class Membership < ApplicationRecord
   validates :user_id, uniqueness: { scope: :channel_id, message: "is already joined" }
   validate :user_must_be_confirmed
 
+  validates :status, inclusion: { in: statuses.keys }
+
   private
 
   def user_must_be_confirmed

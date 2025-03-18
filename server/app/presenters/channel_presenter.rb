@@ -10,7 +10,7 @@ class ChannelPresenter
       id: channel.id,
       name: channel.name,
       description: channel.description,
-      creator: UserPresenter.new(message.sender).to_h,
+      creator: UserPresenter.new(channel.creator).to_h,
       members_count: channel.memberships.active.count,
       last_activity: (channel.last_message_at || channel.created_at).to_s
     }

@@ -6,7 +6,7 @@ class PublicChannelsChannel < ApplicationCable::Channel
   end
 
   def list_public_channels
-    channels = Channel.public_channels.map { |channel| channel_presenter(channel) }
+    channels = channels_ordered_by_active_memberships.map { |channel| channel_presenter(channel) }
     transmit_success("public_channels", channels: channels)
   end
 
@@ -20,6 +20,10 @@ class PublicChannelsChannel < ApplicationCable::Channel
   end
 
   private
+
+  def channels_ordered_by_active_memberships
+    Channel.public_channels.ordered_by_active_memberships
+  end
 
   def create_channel!(data)
     @channel = current_user.created_channels.create!(
