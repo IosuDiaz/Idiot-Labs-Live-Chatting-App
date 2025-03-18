@@ -1,0 +1,3 @@
+TCP (Trasmission Control Protocol): Es un protocolo orientado a la conexion que gestiona la entrega de datos de manera ordenada y garantizada. Se usa en aplicaciones donde se requiere presicion y fiabilidad, por ejemplo cuando se accede a un sitio web el protocolo HTTP/HTTPS usa TCP para enviar la informacion, otro ejemplo es cuando se transfieren archivos (FTP) este protocolo tambien usa TCP.
+
+UDP (User Diagram Protocol): Es un protocolo sin conexion que NO garantiza la entrega ni el orden de los datos. Se usa en aplicaciones donde la velocidad es mas importante que la presicion, como por ejemplo juegos en linea como el Counter-Strike donde el usuario necesita en tiempo real recibir y enviar paquetes de informacion.
