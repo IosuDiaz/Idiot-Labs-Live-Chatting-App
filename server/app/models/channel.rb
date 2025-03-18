@@ -8,10 +8,16 @@ class Channel < ApplicationRecord
   scope :public_channels, -> {
     where(public: true)
       .includes(:creator)
-      .order(created_at: :desc)
   }
 
-  scope :ordered_by_activity, -> { order(last_message_at: :desc) } # TODO: change to ordered_by_active_memberships
+  scope :ordered_by_activity, -> { order(last_message_at: :desc) }
+  scope :ordered_by_active_memberships, -> {
+    joins(:memberships)
+      .group("channels.id")
+      .order(
+        Arel.sql("COUNT(CASE WHEN memberships.status = 'active' THEN 1 END) DESC")
+      )
+  }
 
   scope :between_users, ->(user1, user2) {
     joins(:memberships)
