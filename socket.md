@@ -1,0 +1,1 @@
+Sockets son una interfaz de programación que permite la comunicación entre diferentes dispositivos a través de una red. Usados principalmente en redes TCP/IP, permiten el intercambio de datos entre aplicaciones, como en el caso de chats en tiempo real o servidores web.

@@ -1,0 +1,218 @@
+openapi: 3.0.0
+info:
+  title: Live Chatting API
+  version: 1.0.0
+  description: API para sistema de chat en tiempo real con funcionalidades tipo Twitch
+
+servers:
+  - url: http://localhost:3000
+    description: Desarrollo local
+
+paths:
+  /api/signup:
+    post:
+      summary: Registro de usuario
+      description: Permite registrar un usuario proporcionando email, nickname y password.
+      operationId: signUpUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  required:
+                    - email
+                    - nickname
+                    - password
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                      example: "user_3@gmail.com"
+                    nickname:
+                      type: string
+                      example: "user_3"
+                    password:
+                      type: string
+                      minLength: 6
+                      example: "password"
+      responses:
+        '201':
+          description: Usuario registrado exitosamente
+          content:
+            application/json:
+              example:
+                message: "Signed up successfully. Check your email to confirm the user."
+                data:
+                  email: "user_3@gmail.com"
+        '400':
+          description: Datos inválidos o error de parámetros
+          content:
+            application/json:
+              example:
+                error: 
+                  message: "param is missing or the value is empty: user"
+        '422':
+          description: Error de validación de campos
+          content:
+            application/json:
+              example:
+                errors:
+                  password:
+                    - "can't be blank"
+                    - "is too short (minimum is 6 characters)"
+                  email:
+                    - "has already been taken"
+                  nickname:
+                    - "has already been taken"
+
+  /api/login:
+    post:
+      summary: Login de usuario
+      description: Permite a un usuario confirmado iniciar sesión proporcionando su email y password. El usuario tiene que estar confirmado antes de invocar este servicio porque sino va a responder con status 400
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user_3@gmail.com"
+                password:
+                  type: string
+                  example: "password"
+      responses:
+        '200':
+          description: Login exitoso, token de acceso generado
+          content:
+            application/json:
+              example:
+                data:
+                  access_token: "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozLCJleHAiOjE3NDI0MDYxMTF9.Ra6wRKcFFZObBo349i1XI_kkY-NlmqAeTywXQkJUSSE"
+                  expires_in: 86400
+        '400':
+          description: Datos inválidos o parámetro faltante
+          content:
+            application/json:
+              example:
+                error:
+                  message: "param is missing or the value is empty: password"
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              example:
+                error:
+                  message: "Invalid Credentials."
+        '422':
+          description: El usuario no está confirmado
+          content:
+            application/json:
+              example:
+                error:
+                  message: "User not confirmed."
+                  code: "user_not_confirmed"
+
+  /api/users/confirm:
+    get:
+      summary: Confirmación de usuario
+      description: Confirma del usuario mediante el token de confirmación generado en /tmp con el formato especificado en el challenge.
+      operationId: confirmUser
+      parameters:
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+            example: "eyJhbexampleIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJvalidAiOjE3NDIwNTEzNDB9.CDc2F2G7bFb69RBk5Nbom_nmtljwtrumwQjtS827Naukis"
+          description: Token de confirmación generado al registrar al usuario.
+      responses:
+        '200':
+          description: Confirmación de cuenta exitosa
+          content:
+            application/json:
+              example:
+                message: "¡Account confirmed successfully! You can Login now."
+        '400':
+          description: Token ausente o vacío
+          content:
+            application/json:
+              example:
+                error:
+                  message: "param is missing or the value is empty: token"
+        '401':
+          description: Token expirado o inválido
+          content:
+            application/json:
+              examples:
+                expired:
+                  summary: Token expirado
+                  value:
+                    error:
+                      message: "Signature has expired"
+                invalid:
+                  summary: Token inválido
+                  value:
+                    error:
+                      message: "Signature verification failed"
+
+  /api/users/resend_confirmation:
+    post:
+      summary: Regenerar archivo de confirmación de cuenta
+      description: Regenera el archivo de confirmación de cuenta simulando el envio del correo electrónico al usuario.
+      operationId: resendConfirmation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "iosufdiaz@gmail.com"
+                  description: El correo electrónico del usuario para reenviar la confirmación.
+      responses:
+        '200':
+          description: Correo de confirmación enviado exitosamente
+          content:
+            application/json:
+              example:
+                message: "¡Confirmation sent! Check your email to finish the sign up."
+        '400':
+          description: El parámetro `email` está ausente o vacío
+          content:
+            application/json:
+              example:
+                error:
+                  message: "param is missing or the value is empty: email"
+        '422':
+          description: El usuario ya está confirmado
+          content:
+            application/json:
+              example:
+                error:
+                  message: "User is already confirmed."
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []
