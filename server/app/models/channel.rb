@@ -11,7 +11,15 @@ class Channel < ApplicationRecord
       .order(created_at: :desc)
   }
 
-  scope :ordered_by_activity, -> { order(last_message_at: :desc) }
+  scope :ordered_by_activity, -> { order(last_message_at: :desc) } # TODO: change to ordered_by_active_memberships
+
+  scope :between_users, ->(user1, user2) {
+    joins(:memberships)
+      .where(public: false)
+      .where(memberships: { user_id: [ user1.id, user2.id ] })
+      .group("channels.id")
+      .having("COUNT(DISTINCT memberships.user_id) = 2")
+  }
 
   validates :name,
     presence: true,
@@ -30,7 +38,7 @@ class Channel < ApplicationRecord
   validate :private_channel_has_no_name, unless: :public?
   validate :creator_must_be_confirmed
 
-  after_create :create_creator_membership
+  after_create :create_creator_membership, if: :public?
 
   def active_users
     users.joins(:memberships).where(memberships: { status: "active" }).distinct

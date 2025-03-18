@@ -14,4 +14,9 @@ module ResponseHelper
       error: error
     })
   end
+
+  def transmit_and_reject(code, message)
+    transmit_error({ code: code, message: message })
+    reject
+  end
 end

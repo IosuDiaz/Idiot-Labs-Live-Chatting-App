@@ -9,6 +9,10 @@ class User < ApplicationRecord
     foreign_key: "creator_id",
     dependent: :destroy
 
+  has_many :private_channels, -> { where(public: false) },
+    through: :memberships,
+    source: :channel
+
   validates :email,
     presence: true,
     uniqueness: true,
