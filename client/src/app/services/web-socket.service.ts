@@ -23,7 +23,7 @@ export class WebSocketService {
       return;
     }
 
-    this.cable = createConsumer(`${environment.webSocketUrl}/cable?token=${token}`);
+    this.cable = createConsumer(`${environment.webSocketUrl}?token=${token}`);
   }
 
   subscribeToChannel(channelName: string, params = {}, callback: (data: any) => void) {

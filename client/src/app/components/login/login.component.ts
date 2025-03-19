@@ -36,8 +36,8 @@ export class LoginComponent {
 
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        if (response.token) {
-          localStorage.setItem('authToken', response.token);
+        if (response.data.access_token) {
+          localStorage.setItem('authToken', response.data.access_token);
         }
         this.router.navigate(['']);
       },
