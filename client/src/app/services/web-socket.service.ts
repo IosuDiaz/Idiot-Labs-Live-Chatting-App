@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
 import { Observable, Subject } from 'rxjs';
 
 // @ts-ignore
-import { createConsumer, Cable } from '@rails/actioncable';
+import { createConsumer, Cable, Subscription } from '@rails/actioncable';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketService {
   private cable: Cable | null = null;
-  private subscriptions: { [key: string]: any } = {};
+  private subscriptions: Map<string, Subscription> = new Map();
 
   constructor() {
     this.connect();
@@ -26,7 +26,11 @@ export class WebSocketService {
     this.cable = createConsumer(`${environment.webSocketUrl}?token=${token}`);
   }
 
-  subscribeToChannel(channelName: string, params = {}, callback: (data: any) => void) {
+  subscribeToChannel<T>(
+    channelName: string,
+    params: Record<string, any> = {},
+    callback: (data: T) => void
+  ): void {
     if (!this.cable) {
       console.error('WebSocket connection is not established.');
       return;
@@ -34,25 +38,35 @@ export class WebSocketService {
 
     const subscriptionKey = JSON.stringify({ channel: channelName, ...params });
 
-    if (!this.subscriptions[subscriptionKey]) {
-      this.subscriptions[subscriptionKey] = this.cable.subscriptions.create(
+    if (!this.subscriptions.has(subscriptionKey)) {
+      const subscription = this.cable.subscriptions.create(
         { channel: channelName, ...params },
         {
-          received: (data: any) => callback(data),
-          connected: () => console.log(`Connected to ${channelName}`),
-          disconnected: () => console.log(`Disconnected from ${channelName}`),
+          received: (data: T) => callback(data),
+          connected: () => console.log(`✅ Connected to ${channelName}`),
+          disconnected: () => console.log(`🔴 Disconnected from ${channelName}`),
+          rejected: (reason: any) => {
+            console.error('Error connecting to channel:', reason);
+          },
         }
       );
+
+      this.subscriptions.set(subscriptionKey, subscription);
     }
   }
 
-  unsubscribeFromChannel(channelName: string, params = {}) {
+  getSubscription(channelName: string, params: Record<string, any> = {}): Subscription | null {
+    const subscriptionKey = JSON.stringify({ channel: channelName, ...params });
+    return this.subscriptions.get(subscriptionKey) || null;
+  }
+
+  unsubscribeFromChannel(channelName: string, params: Record<string, any> = {}): void {
     const subscriptionKey = JSON.stringify({ channel: channelName, ...params });
 
-    if (this.subscriptions[subscriptionKey]) {
-      this.subscriptions[subscriptionKey].unsubscribe();
-      delete this.subscriptions[subscriptionKey];
-      console.log(`Unsubscribed from ${channelName}`);
+    if (this.subscriptions.has(subscriptionKey)) {
+      this.subscriptions.get(subscriptionKey)?.unsubscribe();
+      this.subscriptions.delete(subscriptionKey);
+      console.log(`🚫 Unsubscribed from ${channelName}`);
     }
   }
 }

@@ -1,0 +1,42 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px; /* Ajusta el tamaño según lo que prefieras */
+  width: auto;
+}
+
+.search-container {
+  width: 40%;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+
+.logout button {
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #f44336;
+  border: none;
+  cursor: pointer;
+}
+
+.logout button:hover {
+  background-color: #d32f2f;
+}
