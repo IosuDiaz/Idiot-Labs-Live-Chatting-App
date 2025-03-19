@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     post "login", to: "sessions#create"
 
     namespace :users do
+      get "/", to: "users#show"
       get "confirm", to: "confirmations#confirm"
       post "resend_confirmation", to: "confirmations#resend_confirmation"
     end
