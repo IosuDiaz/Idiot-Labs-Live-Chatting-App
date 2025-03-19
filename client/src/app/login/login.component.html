@@ -1,0 +1,51 @@
+<div class="login-container">
+  <h2>Login</h2>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <form (ngSubmit)="login()">
+    <label for="email">Email</label>
+    <input
+      type="email"
+      id="email"
+      [(ngModel)]="email"
+      name="email"
+      required
+      placeholder="Ingrese su email"
+    />
+
+    <label for="password">Password</label>
+    <input
+      type="password"
+      id="password"
+      [(ngModel)]="password"
+      name="password"
+      required
+      placeholder="Ingrese su contraseña"
+    />
+
+    <button type="submit">Login</button>
+  </form>
+
+  <div class="login-actions">
+    <button (click)="goToSignup()">Crear una cuenta</button>
+    
+    <button (click)="openResendModal()">Reenviar link de confirmación</button>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showResendModal">
+  <div class="modal">
+    <h3>Reenviar Confirmación</h3>
+    <p>Ingrese el email para recibir nuevamente el link de confirmación:</p>
+
+    <input type="email" [(ngModel)]="resendEmail" placeholder="Ingrese su email" />
+
+    <div class="modal-actions">
+      <button (click)="resendConfirmationLink()">Enviar</button>
+      <button (click)="closeResendModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
