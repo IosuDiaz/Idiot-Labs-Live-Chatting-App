@@ -1,0 +1,35 @@
+<div class="channels-container">
+  <div class="channel-cards">
+    <div *ngFor="let channel of filteredChannels" class="channel-card">
+      <div class="channel-card-header">
+        <h3>{{ channel.name }}</h3>
+        <p>{{ channel.members_count }} Usuarios</p>
+      </div>
+      <div class="channel-card-body">
+        <p>{{ channel.description }}</p>
+        <button class="join-button" (click)="joinChannel(channel.id)">Unirse</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="create-channel-button" (click)="openCreateChannelModal()">Crear Canal</button>
+
+  <div *ngIf="showCreateChannelModal" class="modal-overlay">
+    <div class="modal-content">
+      <h2>Crear Nuevo Canal</h2>
+      <form (submit)="createChannel()">
+        <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+        <label for="channelName">Nombre del Canal</label>
+        <input type="text" id="channelName" [(ngModel)]="newChannelName" name="channelName" required />
+
+        <label for="channelDescription">Descripción</label>
+        <textarea id="channelDescription" [(ngModel)]="newChannelDescription" name="channelDescription" required></textarea>
+
+        
+        
+        <button type="submit">Crear Canal</button>
+        <button type="button" class="close-modal" (click)="closeCreateChannelModal()">Cerrar</button>
+      </form>
+    </div>
+  </div>
+</div>
