@@ -1,0 +1,97 @@
+.channel-container {
+  display: flex;
+  height: 85vh;
+  overflow: hidden;
+  padding: 20px;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  height: 100%;
+}
+
+.message {
+  background-color: #e1e1e1;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  color: #333;
+}
+
+.message-content {
+  margin-top: 5px;
+  color: #555;
+}
+
+.send-message-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.message-input {
+  padding: 10px;
+  width: 85%;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.send-button {
+  padding: 10px;
+  background-color: #f44336;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+}
+
+.users-list {
+  width: 300px; /* Ancho fijo para el listado de usuarios */
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  position: sticky;
+  top: 20px;
+  height: calc(100vh - 40px); /* Altura ajustada para la lista */
+  overflow-y: auto;
+  margin-left: 20px;
+}
+
+.users-list h4 {
+  margin-top: 0;
+  color: #333;
+}
+
+.users-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.users-list li {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  color: #333;
+}
+
+.users-list li:hover {
+  background-color: #f0f0f0;
+}

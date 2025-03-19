@@ -1,0 +1,31 @@
+<div class="channel-container">
+  <div class="chat-container">
+    <div class="messages-container" #messagesContainer>
+      <div *ngFor="let message of messages" class="message">
+        <div class="message-header">
+          <span class="message-sender">{{ message.sender.nickname }}</span>
+          <span class="message-time">{{ message.created_at | date: 'shortTime' }}</span>
+        </div>
+        <p class="message-content">{{ message.content }}</p>
+      </div>
+    </div>
+
+    <div class="send-message-container">
+      <input
+        type="text"
+        [(ngModel)]="newMessage"
+        (keydown.enter)="sendMessage()"
+        placeholder="Escribe un mensaje..."
+        class="message-input"
+      />
+      <button (click)="sendMessage()" class="send-button">Enviar</button>
+    </div>
+  </div>
+
+  <div class="users-list">
+    <h4>Usuarios</h4>
+    <ul>
+      <li *ngFor="let user of users">{{ user.nickname }}</li>
+    </ul>
+  </div>
+</div>
