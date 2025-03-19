@@ -3,6 +3,7 @@ import { WebSocketService } from '../../services/web-socket.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SearchService } from '../../services/search.service';
+import { Router } from '@angular/router';
 
 interface PublicChannel {
   id: number;
@@ -33,7 +34,8 @@ export class PublicChannelsComponent implements OnInit, OnDestroy {
 
   constructor(
     private webSocketService: WebSocketService,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -110,7 +112,7 @@ export class PublicChannelsComponent implements OnInit, OnDestroy {
 
 
   joinChannel(channelId: number) {
-    
+    this.router.navigate([`/channel/${channelId}`]);
   }
 
   ngOnDestroy() {
