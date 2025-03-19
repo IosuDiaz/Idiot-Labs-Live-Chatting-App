@@ -14,7 +14,7 @@ class ApplicationController < ActionController::API
   private
 
   def token_missing(error)
-    render_error(error, :bad_request)
+    render_error(error, :unauthorized)
   end
 
   def user_not_confirmed(error)
