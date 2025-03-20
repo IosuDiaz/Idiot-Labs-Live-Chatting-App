@@ -1,0 +1,17 @@
+<div class="chat-popup">
+  <div class="chat-header">
+    <span>{{ channel.name }}</span>
+    <button (click)="closeChat()">X</button>
+  </div>
+  <div class="chat-body" #chatBody>
+    <div *ngFor="let message of messages" class="message">
+      <span>{{ message.sender.nickname}}: {{ message.content }}</span>
+    </div>
+  </div>
+  <!-- <div class="chat-footer">
+    <input type="text" [(ngModel)]="newMessage" (keydown.enter)="sendMessage()" placeholder="Escribe un mensaje..." />
+  </div> -->
+  <div class="message-input-container">
+    <textarea [(ngModel)]="newMessage" placeholder="Escribe tu mensaje..." (keydown.enter)="sendMessage($event)" rows="3"></textarea>
+  </div>
+</div>

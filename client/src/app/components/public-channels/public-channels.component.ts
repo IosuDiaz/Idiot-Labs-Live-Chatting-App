@@ -53,15 +53,15 @@ export class PublicChannelsComponent implements OnInit, OnDestroy {
     
         if (channelData.channels) {
           this.publicChannels = channelData.channels;
-
-          this.searchService.searchQuery$.subscribe(query => {
-            this.filteredChannels = this.filterChannels(query);
-          });
         }
     
         if (channelData.channel && response.is_broadcast) {
           this.publicChannels.push(channelData.channel);
         }
+
+        this.searchService.searchQuery$.subscribe(query => {
+          this.filteredChannels = this.filterChannels(query);
+        });
       } else {
         console.error('Error en la respuesta de WebSocket: No se pudo obtener los canales');
       }

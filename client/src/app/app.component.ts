@@ -6,24 +6,32 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from './auth.service';
 import { WebSocketService } from './services/web-socket.service';
 import { NotificationService } from './services/notification.service';
+import { SidebarService } from './services/sidebar.service';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true, 
-  imports: [CommonModule, RouterModule, NavbarComponent],
+  imports: [CommonModule, RouterModule, NavbarComponent, SidebarComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   title = 'Live Chatting App';
+  isSidebarOpen: boolean = false;
   searchQuery: string = '';
 
   constructor(
     private router: Router,
     private authService: AuthService,
     private webSocketService: WebSocketService,
-    private notificationService: NotificationService
-  ) {}
+    private notificationService: NotificationService,
+    private sidebarService: SidebarService
+  ) {
+    this.sidebarService.isSidebarOpen$.subscribe((isOpen) => {
+      this.isSidebarOpen = isOpen;
+    });
+  }
 
   ngOnInit() {
     const token = localStorage.getItem('authToken') || '';

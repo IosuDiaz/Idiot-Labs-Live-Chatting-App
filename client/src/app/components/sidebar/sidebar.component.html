@@ -1,0 +1,22 @@
+<div class="sidebar">
+  <div class="search-bar-container">
+    <input 
+      type="text" 
+      placeholder="Buscar canales..." 
+      [(ngModel)]="searchQuery" 
+      (ngModelChange)="onSearchQueryChange($event)" 
+      class="search-bar" 
+    />
+  </div>
+  <div *ngFor="let channel of filteredChannels" class="channel-item" (click)="joinChannel(channel)">
+    <span>{{ channel.name }}</span>
+  </div>
+</div>
+
+<div class="chat-windows">
+  <app-direct-message
+    *ngFor="let chat of openChats"
+    [channel]="chat"
+    (close)="closeChat(chat)">
+  </app-direct-message>
+</div>
