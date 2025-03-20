@@ -14,23 +14,23 @@
   display: flex;
   align-items: center;
   padding: 0 20px;
-  z-index: 1000; /* Asegura que la navbar esté siempre encima */
+  z-index: 1000;
 }
 
 .main-content {
   display: flex;
-  margin-top: 60px; /* Para no tapar la navbar */
+  margin-top: 60px;
   transition: margin-left 0.3s ease;
 }
 
 .sidebar {
   width: 250px;
-  height: calc(100vh - 60px); /* Ajuste para no tapar la navbar */
+  height: calc(100vh - 60px);
   background-color: #222;
   position: fixed;
   left: 0;
-  top: 60px; /* Comienza justo debajo de la navbar */
-  z-index: 999; /* Debe estar debajo de la navbar */
+  top: 60px;
+  z-index: 999;
   transition: transform 0.3s ease;
 }
 
@@ -45,5 +45,5 @@
 }
 
 .sidebar-open .content {
-  margin-left: 250px; /* Ajusta al ancho de la sidebar */
+  margin-left: 250px;
 }
