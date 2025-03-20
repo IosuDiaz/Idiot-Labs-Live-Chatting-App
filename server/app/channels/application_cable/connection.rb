@@ -6,7 +6,6 @@ module ApplicationCable
     def connect
       self.current_user = find_verified_user
       reject_unauthorized_connection unless current_user&.confirmed?
-      send_private_channels_list
     end
 
     private
@@ -24,16 +23,6 @@ module ApplicationCable
     def find_token_from_header
       header = request.headers["Authorization"]
       header&.split("Bearer ")&.last
-    end
-
-    def send_private_channels_list
-      private_channels = current_user.private_channels.ordered_by_activity.map { |c| channel_presenter(c) }
-
-      transmit_success("private_channels_list", channels: private_channels)
-    end
-
-    def channel_presenter(channel)
-      ChannelPresenter.new(channel).to_h
     end
   end
 end
