@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SearchService } from '../../services/search.service';
+import { SidebarService } from '../../services/sidebar.service';
 
 @Component({
   selector: 'app-navbar',
@@ -14,7 +15,15 @@ export class NavbarComponent {
   searchQuery: string = '';
   @Output() searchQueryChanged = new EventEmitter<string>();
 
-  constructor(private router: Router, private searchService: SearchService) {}
+  constructor(
+    private router: Router,
+    private searchService: SearchService,
+    private sidebarService: SidebarService,
+  ) {}
+
+  toggleSidebar() {
+    this.sidebarService.toggleSidebar();
+  }
 
   logout() {
     localStorage.removeItem('authToken');

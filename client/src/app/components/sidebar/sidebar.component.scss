@@ -1,0 +1,50 @@
+.sidebar {
+  width: 250px;
+  background-color: #333;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  height: calc(100vh - 60px);
+  position: fixed;
+  top: 60px;
+  left: 0;
+  z-index: 999;
+  transition: transform 0.3s ease;
+}
+
+.search-bar-container {
+  width: 200px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: none;
+  font-size: 14px;
+}
+
+.channel-item {
+  padding: 10px;
+  margin: 5px 0;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.channel-item:hover {
+  background-color: #444;
+}
+
+.chat-windows {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 10px;
+}

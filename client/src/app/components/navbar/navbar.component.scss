@@ -1,10 +1,16 @@
 .navbar {
+  position: fixed;      /* Fija la navbar en la parte superior */
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;         /* Altura fija de la navbar */
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
   background-color: #333;
   color: white;
+  z-index: 1000;        /* Asegura que la navbar esté siempre encima */
 }
 
 .navbar-logo {
@@ -13,7 +19,7 @@
 }
 
 .logo {
-  height: 40px; /* Ajusta el tamaño según lo que prefieras */
+  height: 65px;         /* Ajusta el tamaño del logo */
   width: auto;
 }
 
@@ -27,7 +33,6 @@
   border-radius: 4px;
   border: 1px solid #ccc;
 }
-
 
 .logout button {
   padding: 8px 16px;
