@@ -34,26 +34,26 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    const token = localStorage.getItem('authToken') || '';
+    let token = localStorage.getItem('authToken') || '';
 
     if (!token) {
       this.router.navigate(['/login']);
+    } else {
+      this.authService.getUser(token).subscribe({
+        next: (response) => {
+          if (response) {
+            this.webSocketService.subscribeToChannel('NotificationsChannel', {}, (notification) => {
+              this.notificationService.sendNotification(notification);
+            });
+            this.router.navigate(['/channels']);
+          } 
+        },
+        error: () => {
+          localStorage.removeItem('authToken');
+          this.router.navigate(['/login']);
+        },
+      });
     }
-
-    this.authService.getUser(token).subscribe({
-      next: (response) => {
-        if (response) {
-          this.webSocketService.subscribeToChannel('NotificationsChannel', {}, (notification) => {
-            this.notificationService.sendNotification(notification);
-          });
-          this.router.navigate(['']);
-        } 
-      },
-      error: () => {
-        localStorage.removeItem('authToken');
-        this.router.navigate(['/login']);
-      },
-    });
   }
 
   get showNavbar(): boolean {

@@ -16,13 +16,12 @@ export class WebSocketService {
     this.connect();
   }
 
-  private connect() {
+  connect() {
     const token = localStorage.getItem('authToken');
     if (!token) {
       console.warn('No auth token found, skipping WebSocket connection');
       return;
     }
-
     this.cable = createConsumer(`${environment.webSocketUrl}?token=${token}`);
   }
 
