@@ -1,14 +1,13 @@
 .chat-popup {
   position: relative;
-  z-index: 999;
-  bottom: 10px;  /* Asegura que empiece en la parte inferior */
+  z-index: 9999;
+  bottom: 10px;
   right: 20px;
   width: 300px;
   background-color: #f4f4f4;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
-  margin-bottom: 10px; /* Espacio entre las ventanas */
-  z-index: 10;
+  margin-bottom: 10px;
 }
 
 .chat-header {
@@ -27,19 +26,19 @@
 
 .message-input-container {
   display: flex;
-  flex-direction: column;  /* Hace que el contenido se apile */
-  width: 100%;  /* El contenedor ocupa todo el ancho disponible */
+  flex-direction: column;
+  width: 100%;
 }
 
 textarea {
-  flex-grow: 1;  /* Esto hace que el textarea crezca para ocupar el espacio disponible */
-  width: 100%;  /* Asegura que el texto se ajuste al contenedor */
+  flex-grow: 1;
+  width: 100%;
   padding: 10px;
   font-size: 14px;
   border-radius: 4px;
   border: 1px solid #ccc;
   box-sizing: border-box;
-  resize: none;  /* Opcional, evita que el usuario cambie el tamaño del textarea */
+  resize: none;
 }
 
 .message {
