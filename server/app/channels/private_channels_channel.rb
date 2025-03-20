@@ -45,10 +45,13 @@ class PrivateChannelsChannel < ApplicationCable::Channel
       channel
     end
 
-    NotificationsChannel.broadcast_to(
-      receiver,
-      { action: "new_private_channel", channel_id: channel_presenter(channel, current_user) }
-    )
+    broadcast_new_private_channel("new_private_channel", { channel: channel_presenter(channel, current_user) })
+  end
+
+  def broadcast_new_private_channel(action, payload)
+    broadcast_to_channel(receiver, action, payload.deep_stringify_keys) do |channel, payload|
+      NotificationsChannel.broadcast_to(channel, payload)
+    end
   end
 
   def channel_presenter(channel, receiver)
