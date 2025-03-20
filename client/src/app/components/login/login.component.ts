@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../auth.service';
+import { WebSocketService } from '../../services/web-socket.service';
 
 @Component({
   selector: 'app-login',
@@ -26,7 +27,11 @@ export class LoginComponent {
     422: 'El usuario ya se encuentra confirmado.',
   };
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private webSocketService: WebSocketService,
+  ) {}
 
   login() {
     if (!this.email || !this.password) {
@@ -38,8 +43,9 @@ export class LoginComponent {
       next: (response) => {
         if (response.data.access_token) {
           localStorage.setItem('authToken', response.data.access_token);
+          this.webSocketService.connect();
         }
-        this.router.navigate(['']);
+        this.router.navigate(['/channels']);
       },
       error: (response) => {
         this.errorMessage = this.errorMessages[response.status] || 'Ocurrió un error inesperado.';
