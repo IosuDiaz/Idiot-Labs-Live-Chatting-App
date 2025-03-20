@@ -4,6 +4,8 @@ import { RouterModule } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './auth.service';
+import { WebSocketService } from './services/web-socket.service';
+import { NotificationService } from './services/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +18,12 @@ export class AppComponent implements OnInit {
   title = 'Live Chatting App';
   searchQuery: string = '';
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private webSocketService: WebSocketService,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit() {
     const token = localStorage.getItem('authToken') || '';
@@ -27,10 +34,12 @@ export class AppComponent implements OnInit {
 
     this.authService.getUser(token).subscribe({
       next: (response) => {
-        if (response.status == '200') {
-          localStorage.setItem('authToken', response.data.access_token);
-        }
-        this.router.navigate(['']);
+        if (response) {
+          this.webSocketService.subscribeToChannel('NotificationsChannel', {}, (notification) => {
+            this.notificationService.sendNotification(notification);
+          });
+          this.router.navigate(['']);
+        } 
       },
       error: () => {
         localStorage.removeItem('authToken');
