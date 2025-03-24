@@ -6,10 +6,10 @@ class PrivateChannelsChannel < ApplicationCable::Channel
   end
 
   def create_channel(data)
-    @receiver = User.find_by(id: data["receiver_id"])
+    @receiver = User.find_by(nickname: data["receiver_nickname"])
 
     return transmit_error(invalid_receiver_error) if receiver.nil? || receiver == current_user
-
+    return transmit_error(channel_already_created) if existing_channel?
     find_or_create_private_channel!
 
     transmit_success("private_channel_created", channel: channel_presenter(channel, receiver))
@@ -29,15 +29,19 @@ class PrivateChannelsChannel < ApplicationCable::Channel
 
   private
 
+  def channel_already_created
+    { code: "channel_already_created", message: "Canal ya creado, busca en la lista de mensajes directos!" }
+  end
+
+  def existing_channel?
+    Channel.between_users(current_user, receiver).first.present?
+  end
+
   def invalid_receiver_error
     { code: "invalid_receiver", message: "Invalid receiver" }
   end
 
   def find_or_create_private_channel!
-    @channel = Channel.between_users(current_user, receiver).first
-
-    return if channel.present?
-
     @channel = ActiveRecord::Base.transaction do
       channel = current_user.created_channels.create!(public: false)
       channel.memberships.create!(user: current_user)

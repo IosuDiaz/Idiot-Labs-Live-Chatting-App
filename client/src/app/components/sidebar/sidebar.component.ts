@@ -23,6 +23,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
   openChats: PrivateChannel[] = [];
   subscriptionKey: string = 'PrivateChannelsChannel'
   searchQuery: string = '';
+  showCreateDirectMessageModal: boolean = false;
+  receiverNickname: string = '';
+  errorMessage: string = '';
 
 
   constructor(
@@ -50,6 +53,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
         channels?: PrivateChannel[];
         channel?: PrivateChannel;
       };
+      error: {
+        code: string;
+        message: string;
+      }
       is_broadcast: boolean;
     }>(this.subscriptionKey, {}, (response) => {
       if (response && response.success) {
@@ -59,7 +66,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
           this.privateChannels = channelData.channels;
         }
 
-        if (channelData.channel && response.is_broadcast) {
+        if (channelData.channel) {
           this.privateChannels.unshift(channelData.channel);
         }
 
@@ -68,6 +75,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
         });
       } else {
         console.error('Error en la respuesta de WebSocket: No se pudo obtener los canales');
+        if (response.error && response.error.message) {
+          this.errorMessage = response.error.message
+        }
+        setTimeout(() => {
+          this.errorMessage = '';
+        }, 5000);
       }
     });
 
@@ -81,6 +94,24 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   onSearchQueryChange(query: string): void {
     this.sidebarSearchService.setSearchQuery(query);
+  }
+
+  createDirectMessage() {
+    const subscription = this.webSocketService.getSubscription(this.subscriptionKey);
+    
+    if (subscription) {
+      subscription.perform('create_channel', { receiver_nickname: this.receiverNickname });
+    }
+    this.closeDirectMessageModal()
+  }
+
+  openCreateDirectMessageModal() {
+    this.showCreateDirectMessageModal = true;
+  }
+  
+  closeDirectMessageModal() {
+    this.showCreateDirectMessageModal = false;
+    this.receiverNickname = '';
   }
 
   joinChannel(channel: PrivateChannel) {
