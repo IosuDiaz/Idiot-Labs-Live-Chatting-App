@@ -1,4 +1,5 @@
 <div class="sidebar">
+  <label>Mensajes directos</label>
   <div class="search-bar-container">
     <input 
       type="text" 
@@ -8,6 +9,10 @@
       class="search-bar" 
     />
   </div>
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+  <button (click)="openCreateDirectMessageModal()">Enviar mensaje directo</button>
   <div *ngFor="let channel of filteredChannels" class="channel-item" (click)="joinChannel(channel)">
     <span>{{ channel.name }}</span>
   </div>
@@ -19,4 +24,19 @@
     [channel]="chat"
     (close)="closeChat(chat)">
   </app-direct-message>
+</div>
+
+
+<div class="modal" *ngIf="showCreateDirectMessageModal">
+  <div class="modal-content">
+    <h2>Nuevo Mensaje Directo</h2>
+    <p>Ingrese el nombre del usuario al que quiere mandarle el mensaje:</p>
+
+    <input type="text" [(ngModel)]="receiverNickname" placeholder="Nombre de usuario">
+
+    <div class="modal-actions">
+      <button (click)="createDirectMessage()">Iniciar Chat</button>
+      <button (click)="closeDirectMessageModal()">Cancelar</button>
+    </div>
+  </div>
 </div>
